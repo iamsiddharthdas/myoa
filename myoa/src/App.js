@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback } from "react";
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 
 const GRAINS = [
   { id: "black_wheat", name: "Black Wheat", category: "Wheat", benefit: "Rich in Antioxidants", price: "₹27 / 150gm", pricePerKg: 180 },
@@ -346,111 +346,6 @@ export default function App() {
       setTimeout(() => setCopied(false), 2000);
     });
   }, [tempName, selectedGrains, percentages, costPerKg]);
-
-  const downloadPDF = useCallback(() => {
-    const name = tempName.trim() || "My Custom Atta";
-    setBlendName(name);
-    setShowRenameModal(false);
-
-    const categories = ["Wheat", "Millet", "Seed", "Pulse", "Grain"];
-    const CAT_COLORS = { Wheat: "#D4A373", Millet: "#52B788", Seed: "#F4A261", Pulse: "#E76F51", Grain: "#ADB5BD" };
-    const CAT_TEXT = { Wheat: "#7a5a35", Millet: "#1a5e3a", Seed: "#7a4a10", Pulse: "#7a2a10", Grain: "#3a3e44" };
-    const today = new Date().toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
-
-    const grainRowsHtml = categories.map(cat => {
-      const grains = selectedGrains.filter(g => g.category === cat && (percentages[g.id] || 0) > 0);
-      if (!grains.length) return "";
-      const catTotal = grains.reduce((s, g) => s + (percentages[g.id] || 0), 0);
-      return `<div style="margin-bottom:12px">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
-          <span style="font-size:9px;font-weight:700;text-transform:uppercase;padding:2px 7px;border-radius:4px;background:${CAT_COLORS[cat]};color:${CAT_TEXT[cat]}">${cat}</span>
-          <span style="font-size:10px;color:#9ca3af;margin-left:auto">${catTotal}%</span>
-        </div>
-        ${grains.map(g => `
-          <div style="display:flex;align-items:center;gap:7px;padding-left:14px;margin-bottom:3px">
-            <span style="width:6px;height:6px;border-radius:50%;background:${CAT_COLORS[cat]};display:inline-block;flex-shrink:0"></span>
-            <span style="flex:1;font-size:12px;color:#374151">${g.name}</span>
-            <span style="font-size:12px;font-weight:700;color:#2D6A4F;min-width:30px;text-align:right">${percentages[g.id]}%</span>
-          </div>`).join("")}
-      </div>`;
-    }).join("");
-
-    const tagsHtml = benefitTags.length
-      ? benefitTags.map(t => `<span style="background:#e9f5ef;color:#2D6A4F;font-size:10px;font-weight:600;padding:4px 9px;border-radius:14px;border:1px solid #95d5b2;display:inline-block;margin:2px">${t}</span>`).join("")
-      : `<span style="font-size:11px;color:#9ca3af">No specific benefit tags for this blend</span>`;
-
-    const tipsHtml = cookingTips.map(t =>
-      `<div style="display:flex;gap:8px;margin-bottom:8px">
-        <span style="font-size:11px;font-weight:700;color:#F4A261;white-space:nowrap;min-width:72px">${t.label}</span>
-        <span style="font-size:11px;color:#374151;line-height:1.5">${t.text}</span>
-      </div>`
-    ).join("");
-
-    const nutrCells = [["Carbs", nutrition.carbs], ["Protein", nutrition.protein], ["Fiber", nutrition.fiber], ["Fat", nutrition.fat]]
-      .map(([label, val]) => `<td style="width:25%;padding:0 4px">
-        <div style="background:#fefae0;border-radius:8px;padding:8px 10px">
-          <div style="font-size:10px;color:#6B7280;margin-bottom:2px">${label}</div>
-          <div style="font-size:16px;font-weight:800;color:#1B1B1B">${val}<span style="font-size:10px;font-weight:400;color:#6B7280">g</span></div>
-        </div></td>`).join("");
-
-    const html = `<!DOCTYPE html><html><head><meta charset="utf-8">
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',Arial,sans-serif;background:#FEFAE0;color:#1B1B1B;padding:28px 32px;font-size:13px}
-</style></head><body>
-<div style="max-width:780px;margin:0 auto">
-  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;padding-bottom:14px;border-bottom:2px solid #2D6A4F">
-    <div>
-      <div style="font-size:10px;color:#6B7280;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Make Your Own Atta &middot; Custom Blend</div>
-      <div style="font-size:22px;font-weight:800;color:#2D6A4F">${name}</div>
-    </div>
-    <div style="background:#2D6A4F;color:#fff;border-radius:20px;padding:6px 16px;font-size:13px;font-weight:700">&#8377;${costPerKg}/kg</div>
-  </div>
-  <table style="width:100%;border-collapse:separate;border-spacing:12px 0;margin-bottom:16px"><tr valign="top">
-    <td style="width:48%">
-      <div style="background:#fff;border-radius:12px;border:1.5px solid #e8e0d0;padding:14px 16px">
-        <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#6B7280;margin-bottom:10px">Blend Composition</div>
-        ${grainRowsHtml}
-      </div>
-    </td>
-    <td style="width:52%">
-      <div style="background:#fff;border-radius:12px;border:1.5px solid #e8e0d0;padding:14px 16px;margin-bottom:12px">
-        <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#6B7280;margin-bottom:10px">Nutrition &middot; per chapati (30g)</div>
-        <div style="font-size:28px;font-weight:800;color:#2D6A4F;margin-bottom:10px">${nutrition.kcal} <span style="font-size:13px;font-weight:400;color:#6B7280">kcal</span></div>
-        <table style="width:100%;border-collapse:separate;border-spacing:4px"><tr>${nutrCells}</tr></table>
-        <div style="font-size:9px;color:#9ca3af;margin-top:6px">Approximate values &mdash; may vary by grain quality &amp; season</div>
-        <div style="margin-top:8px">
-          <span style="background:#e9f5ef;color:#2D6A4F;font-weight:700;font-size:11px;padding:4px 12px;border-radius:14px">GI ${gi.gi}</span>
-          <span style="background:${gi.label === "Low" ? "#e9f5ef" : "#fff8ed"};color:${gi.label === "Low" ? "#2D6A4F" : "#b45309"};font-weight:700;font-size:11px;padding:4px 12px;border-radius:14px;margin-left:6px">${gi.label}</span>
-        </div>
-      </div>
-      <div style="background:#fff;border-radius:12px;border:1.5px solid #e8e0d0;padding:14px 16px">
-        <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#6B7280;margin-bottom:8px">Suggested Benefits</div>
-        <div>${tagsHtml}</div>
-        <div style="font-size:9px;color:#9ca3af;margin-top:8px">General suggestion. Consult your doctor for medical conditions.</div>
-      </div>
-    </td>
-  </tr></table>
-  <div style="background:#fff;border-radius:12px;border:1.5px solid #e8e0d0;padding:14px 16px;margin-bottom:16px">
-    <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#6B7280;margin-bottom:10px">Cooking Tips</div>
-    ${tipsHtml}
-  </div>
-  <div style="padding-top:12px;border-top:1px solid #e8e0d0;font-size:9px;color:#9ca3af;display:flex;justify-content:space-between">
-    <span>Generated by Make Your Own Atta</span><span>${today}</span>
-  </div>
-</div>
-</body></html>`;
-
-    // Encode as data URI and trigger download
-    const encoded = "data:text/html;charset=utf-8," + encodeURIComponent(html);
-    const a = document.createElement("a");
-    a.href = encoded;
-    a.download = name.replace(/[^a-z0-9]/gi, "_") + ".html";
-    a.style.display = "none";
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(() => a.remove(), 500);
-  }, [tempName, selectedGrains, percentages, costPerKg, nutrition, benefitTags, gi, cookingTips]);
 
   const resetAll = useCallback(() => {
     setStep(1); setSelectedIds([]); setPercentages({});
