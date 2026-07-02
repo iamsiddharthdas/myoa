@@ -32,6 +32,15 @@ const GRAINS = [
   { id: "singhara", name: "Singhara", category: "Grain", benefit: "Perfect for Fasting", price: "₹42 / 100g", pricePerKg: 420 },
 ];
 
+function normalizePresetGrains(grains) {
+  const total = Object.values(grains).reduce((sum, pct) => sum + pct, 0);
+  const diff = 100 - total;
+  if (diff === 0) return grains;
+  const wheatId = Object.keys(grains).find(id => GRAINS.find(g => g.id === id)?.category === "Wheat");
+  const targetId = wheatId || Object.keys(grains)[0];
+  return { ...grains, [targetId]: grains[targetId] + diff };
+}
+
 const PRESETS = [
   { id: "protein", label: "💪 Protein Rich", grains: { khapli_wheat: 27, besan: 13, ragi: 13, soyabean: 7, green_moong_dal: 13, yellow_moong_dal: 13, amaranth: 13 } },
   { id: "diabetes", label: "🌿 Diabetes Friendly", grains: { khapli_wheat: 28, jowar: 13, bajra: 13, methi_dana: 3, flax_seeds: 3, little_millet: 13, kodo_millet: 13, jau_barley: 13 } },
@@ -40,7 +49,7 @@ const PRESETS = [
   { id: "senior", label: "🧓 Senior Friendly", grains: { khapli_wheat: 47, jowar: 22, ragi: 11, jau_barley: 11, yellow_moong_dal: 4, little_millet: 4 } },
   { id: "pcos", label: "🌸 PCOS Friendly", grains: { khapli_wheat: 32, jowar: 15, bajra: 8, ragi: 8, flax_seeds: 3, methi_dana: 3, little_millet: 15, kodo_millet: 15 } },
   { id: "cardio", label: "❤️ Cardiocare", grains: { jowar: 32, jau_barley: 15, oats: 15, flax_seeds: 3, quinoa: 3, proso_millet: 15, little_millet: 15 } },
-];
+].map(preset => ({ ...preset, grains: normalizePresetGrains(preset.grains) }));
 
 const CATEGORY_COLORS = {
   Wheat: "#D4A373",
