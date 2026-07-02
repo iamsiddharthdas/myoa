@@ -42,13 +42,13 @@ function normalizePresetGrains(grains) {
 }
 
 const PRESETS = [
-  { id: "protein", label: "💪 Protein Rich", grains: { khapli_wheat: 27, besan: 13, ragi: 13, soyabean: 7, green_moong_dal: 13, yellow_moong_dal: 13, amaranth: 13 } },
+  { id: "protein", label: "💪 Protein Rich", grains: { khapli_wheat: 28, besan: 13, ragi: 13, soyabean: 7, green_moong_dal: 13, yellow_moong_dal: 13, amaranth: 13 } },
   { id: "diabetes", label: "🌿 Diabetes Friendly", grains: { khapli_wheat: 28, jowar: 13, bajra: 13, methi_dana: 3, flax_seeds: 3, little_millet: 13, kodo_millet: 13, jau_barley: 13 } },
-  { id: "calorie", label: "⚡ Calorie Conscious", grains: { khapli_wheat: 16, ragi: 15, jowar: 15, little_millet: 15, flax_seeds: 3, methi_dana: 3, foxtail_millet: 15, brown_top_millet: 15, chia_seeds: 3 } },
+  { id: "calorie", label: "⚡ Calorie Conscious", grains: { khapli_wheat: 17, ragi: 15, jowar: 15, little_millet: 15, flax_seeds: 3, methi_dana: 3, foxtail_millet: 15, brown_top_millet: 15, chia_seeds: 3 } },
   { id: "gut", label: "🌿 Gut Health", grains: { jowar: 38, oats: 18, jau_barley: 18, flax_seeds: 4, green_moong_dal: 4, bajra: 18 } },
-  { id: "senior", label: "🧓 Senior Friendly", grains: { khapli_wheat: 47, jowar: 22, ragi: 11, jau_barley: 11, yellow_moong_dal: 4, little_millet: 4 } },
-  { id: "pcos", label: "🌸 PCOS Friendly", grains: { khapli_wheat: 32, jowar: 15, bajra: 8, ragi: 8, flax_seeds: 3, methi_dana: 3, little_millet: 15, kodo_millet: 15 } },
-  { id: "cardio", label: "❤️ Cardiocare", grains: { jowar: 32, jau_barley: 15, oats: 15, flax_seeds: 3, quinoa: 3, proso_millet: 15, little_millet: 15 } },
+  { id: "senior", label: "🧓 Senior Friendly", grains: { khapli_wheat: 48, jowar: 22, ragi: 11, jau_barley: 11, yellow_moong_dal: 4, little_millet: 4 } },
+  { id: "pcos", label: "🌸 PCOS Friendly", grains: { khapli_wheat: 33, jowar: 15, bajra: 8, ragi: 8, flax_seeds: 3, methi_dana: 3, little_millet: 15, kodo_millet: 15 } },
+  { id: "cardio", label: "❤️ Cardiocare", grains: { jowar: 34, jau_barley: 15, oats: 15, flax_seeds: 3, quinoa: 3, proso_millet: 15, little_millet: 15 } },
 ].map(preset => ({ ...preset, grains: normalizePresetGrains(preset.grains) }));
 
 const CATEGORY_COLORS = {
